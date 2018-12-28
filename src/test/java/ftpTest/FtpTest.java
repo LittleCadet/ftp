@@ -1,6 +1,7 @@
 package ftpTest;
 
 import com.myproj.ftp.FtpDelete;
+import com.myproj.ftp.FtpDownload;
 import com.myproj.ftp.FtpUpload;
 import org.junit.Assert;
 import org.junit.Test;
@@ -15,6 +16,8 @@ public class FtpTest
     private FtpUpload ftpUpload = new FtpUpload();
 
     private FtpDelete ftpDelete = new FtpDelete();
+
+    private FtpDownload ftpdownload = new FtpDownload();
 
     /**
      * 用ftp上传到服务器上指定文件到指定目录下
@@ -32,5 +35,14 @@ public class FtpTest
     public void deleteFile()
     {
         Assert.assertTrue(ftpDelete.deleteFile());
+    }
+
+    /**
+     * 用ftp从服务器下载指定文件
+     */
+    @Test
+    public void download()
+    {
+        Assert.assertTrue(ftpdownload.download());
     }
 }

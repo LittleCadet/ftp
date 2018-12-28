@@ -22,22 +22,23 @@ public class FtpUpload
 
     private Integer reTryTimes = 3;
 
-    public FTPClient client = FtpUtil.init();
+    private FTPClient client = FtpUtil.init();
 
     //指定上传到服务器的路径
     private String remoteFilePath = "/home/dsdp/charging/ftpTest";
 
     //指定需要上传的本地文件路径
-    private String localFilePath = "D:\\fxDownload\\ftpTest.txt";
+    private String localFilePath = "D:\\fxDownload\\ftpTests.zip";
 
      //分隔符‘\’
-    public static final String SPLIT_BACKSLASH = "\\";
+     private final String SPLIT_BACKSLASH = "\\";
 
      //分隔符“/”
-    public static final String SPLIT_FORWARD_SLASH = "/";
+    private final String SPLIT_FORWARD_SLASH = "/";
 
     /**
      * ftp上传到指定服务器：根据ip和端口号连接到ftp，根据用户名，密码登录ftp，将二进制文件上到ftp（3次机会），关流，注销ftp用户，ftp断开连接
+     * @return 判定是否上传完成
      */
     public Boolean upload()
     {
@@ -58,6 +59,8 @@ public class FtpUpload
 
     /**
      * 创建服务器文件，将二进制的文件上传到ftp
+     * @param flag：是否上传成功
+     * @return 判定是否上传成功
      */
     public boolean uploadFileToFtp(Boolean flag)
     {
@@ -92,27 +95,28 @@ public class FtpUpload
             //用ftpClient上传到服务器
             flag = client.storeFile(remote, is);
 
+            System.out.println("用ftp传输二进制文件" +(flag.toString().equals("true") ?"成功":"失败"));
         }
         catch (FileNotFoundException e)
         {
-            System.out.println("uploadFileToFtp:failed,localFilePath:"+localFilePath+",remoteFilePath:"+remoteFilePath+",\nexception:"+e);
+            System.out.println("uploadFileToFtp:failed,localFilePath:"+localFilePath+",\nexception:"+e);
         }
         catch (IOException e)
         {
             System.out.println("uploadFileToFtp:failed"+",\nexception:"+e);
         }
+        finally
+        {
+            //关闭资源
+            FtpUtil.closeResources(is,null,client);
+        }
 
-        System.out.println("用ftp传输二进制文件" +(flag.toString().equals("true") ?"成功":"失败"));
-
-        //关闭资源
-        FtpUtil.closeResources(is,client);
 
         return flag;
     }
 
     /**
      * 判定是否在服务器创建文件成功
-     * @return
      */
     public void mkDir()
     {

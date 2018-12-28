@@ -21,18 +21,19 @@ public class FtpDelete
     private String remoteFilePath = "/home/dsdp/charging/ftpTest";
 
     //指定需要上传的本地文件路径
-    private String localFilePath = "D:\\fxDownload\\ftpTest.txt";
+    private String localFilePath = "D:\\fxDownload\\ftpTest.zip";
 
     //分隔符‘\’
-    private static final String SPLIT_BACKSLASH = "\\";
+    private final String SPLIT_BACKSLASH = "\\";
 
     //分隔符“/”
-    private static final String SPLIT_FORWARD_SLASH = "/";
+    private final String SPLIT_FORWARD_SLASH = "/";
 
     private FTPClient client = FtpUtil.init();
 
     /**
      * 删除指定目录下的指定文件，但是不能删除文件夹
+     * @return 判定是否已删除
      */
     public boolean deleteFile()
     {
@@ -61,17 +62,19 @@ public class FtpDelete
         }
         catch (IOException e)
         {
-            System.out.println("用ftp切换服务器的目录失败：exception:"+e);
+            System.out.println("something wrong with changing directory by ftp：exception:"+e);
         }
-
-        FtpUtil.closeResources(null,client);
+        finally
+        {
+            FtpUtil.closeResources(null,null,client);
+        }
 
         return isExist==250?Boolean.TRUE:Boolean.FALSE;
     }
 
     /**
      * 删除的过程
-     * @return
+     * @return 返回是否删除文件的返回码：返回码为250，则删除该文件成功，那么代表该文件夹存在,返回码为550，代表删除失败
      */
     public Integer deleteProcess(String fileName)
     {
@@ -93,7 +96,7 @@ public class FtpDelete
         }
         catch (IOException e)
         {
-            System.out.println("ftp删除指定目录下的指定文件失败：指定文件路径："+remoteFilePath+",exception:"+e);
+            System.out.println("failed to delete file by ftp ：remoteFilePath："+remoteFilePath+",exception:"+e);
         }
 
         return isExist;

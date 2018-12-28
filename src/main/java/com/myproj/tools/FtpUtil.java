@@ -1,6 +1,8 @@
 package com.myproj.tools;
 
 import org.apache.commons.net.ftp.FTPClient;
+
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 
@@ -66,7 +68,7 @@ public class FtpUtil
      * @param is 输入流
      * @param client ftp客户端
      */
-    public static void closeResources(InputStream is,FTPClient client)
+    public static void closeResources(InputStream is, FileOutputStream os,FTPClient client)
     {
         try
         {
@@ -74,6 +76,12 @@ public class FtpUtil
             {
                 is.close();
             }
+
+            if(null != os)
+            {
+                os.close();
+            }
+
             if(client.isConnected())
             {
                 System.out.println("正在用ftp注销用户中");
@@ -90,7 +98,7 @@ public class FtpUtil
         }
         catch (IOException e)
         {
-            System.out.println("closeResources:fail,\n ftpClient的连接状态："+(String.valueOf(client.isConnected()).equals(Boolean.TRUE)?"连接":"已断开连接"+",\nexception:"+e));
+            System.out.println("closeResources:fail,\n the status of ftpClient："+(String.valueOf(client.isConnected()).equals(Boolean.TRUE)?"connect":"disconnect"+",\nexception:"+e));
         }
     }
 }
