@@ -13,7 +13,23 @@ import java.io.InputStream;
  */
 public class FtpUtil
 {
-    private  static FTPClient client = null;
+    //远程主机ip
+    private static String host;
+
+    //远程主机用户名
+    private static String account;
+
+    //远程主机密码
+    private static String password;
+
+    //重试次数
+    private static String reTryTimes;
+
+    //ftp的socket的失效时间
+    private static String timeOut;
+
+    //FTPClient的对象
+    private static FTPClient client = null;
 
     public static FTPClient init()
     {
@@ -26,41 +42,53 @@ public class FtpUtil
     }
 
     /**
-     * 连接ftp并登录
-     * @param host 服务器ip
-     * @param userName 用户名
-     * @param password 密码
-     * @return
+     * 连接ftp并登录,配有重试机制，设置socket的过期时间
+     * @return 是否连接成功
      */
-    public static boolean connectToFtp(String host,String userName,String password)
+    public static boolean connectToFtp()
     {
-        Boolean flag = false;
-        try
+        for(int i = 0;i< Integer.valueOf(reTryTimes);i++)
         {
-            //根据ip+port连接ftp
-            client.connect(host);
+            return connectToFtpProcess();
+        }
 
-            //登录ftp
-            flag = client.login(userName,password);
+        return false;
+    }
 
-            if(!flag)
+    public static boolean connectToFtpProcess()
+    {
+        {
+            Boolean flag = false;
+            try
             {
-                //只要登录失败，就断开ftp连接
-                client.disconnect();
+                //根据ip+port连接ftp
+                client.connect(host);
 
-                System.out.println("connectToFtp,login ftp failed,userName:"+userName + ",password:"+password);
+                //登录ftp
+                flag = client.login(account,password);
 
+                if(!flag)
+                {
+                    //只要登录失败，就断开ftp连接
+                    client.disconnect();
+
+                    System.out.println("connectToFtp,login ftp failed,userName:"+account + ",password:"+password);
+
+                    return false;
+                }
+
+                //设置socket的过期时间
+                client.setSoTimeout(Integer.valueOf(timeOut));
+
+                System.out.println("用户登录ftp" +(flag.toString().equals("true") ?"成功":"失败"));
+            }
+            catch (IOException e)
+            {
+                System.out.println("connectToFtp, failed,userName:"+account + ",password:"+password+",\nexception:"+e);
                 return false;
             }
-
-            System.out.println("用户登录ftp" +(flag.toString().equals("true") ?"成功":"失败"));
+            return true;
         }
-        catch (IOException e)
-        {
-            System.out.println("connectToFtp, failed,userName:"+userName + ",password:"+password+",\nexception:"+e);
-            return false;
-        }
-        return true;
     }
 
     /**
@@ -100,5 +128,65 @@ public class FtpUtil
         {
             System.out.println("closeResources:fail,\n the status of ftpClient："+(String.valueOf(client.isConnected()).equals(Boolean.TRUE)?"connect":"disconnect"+",\nexception:"+e));
         }
+    }
+
+    public static void setHost(String host)
+    {
+        FtpUtil.host = host;
+    }
+
+    public static String getHost()
+    {
+        return host;
+    }
+
+    public static void setAccount(String account)
+    {
+        FtpUtil.account = account;
+    }
+
+    public static String getAccount()
+    {
+        return account;
+    }
+
+    public static String getPassword()
+    {
+        return password;
+    }
+
+    public static void setPassword(String password)
+    {
+        FtpUtil.password = password;
+    }
+
+    public static String getReTryTimes()
+    {
+        return reTryTimes;
+    }
+
+    public static void setReTryTimes(String reTryTimes)
+    {
+        FtpUtil.reTryTimes = reTryTimes;
+    }
+
+    public static String getTimeOut()
+    {
+        return timeOut;
+    }
+
+    public static void setTimeOut(String timeOut)
+    {
+        FtpUtil.timeOut = timeOut;
+    }
+
+    public static FTPClient getClient()
+    {
+        return client;
+    }
+
+    public static void setClient(FTPClient client)
+    {
+        FtpUtil.client = client;
     }
 }

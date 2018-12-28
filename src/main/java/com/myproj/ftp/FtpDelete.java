@@ -11,20 +11,8 @@ import java.io.IOException;
  */
 public class FtpDelete
 {
-    private String host = "10.211.95.106";
-
-    private String userName = "charging";
-
-    private String password = "huawei!Q2w";
-
     //指定上传到服务器的路径
-    private String remoteFilePath = "/home/dsdp/charging/ftpTest";
-
-    //指定需要上传的本地文件路径
-    private String localFilePath = "D:\\fxDownload\\ftpTest.zip";
-
-    //分隔符‘\’
-    private final String SPLIT_BACKSLASH = "\\";
+    private String remoteDeleteFilePath;
 
     //分隔符“/”
     private final String SPLIT_FORWARD_SLASH = "/";
@@ -37,22 +25,27 @@ public class FtpDelete
      */
     public boolean deleteFile()
     {
-        int isExist = 0;
-
         //连接到ftp
-        FtpUtil.connectToFtp(host,userName,password);
+        FtpUtil.connectToFtp();
 
-        int fileNameIndex = localFilePath.lastIndexOf(SPLIT_BACKSLASH);
+        return deleteProcess();
+    }
 
-        //去除“\\”
-        String fileName = localFilePath.substring(fileNameIndex+1);
+    public boolean deleteProcess()
+    {
+        int isExist = 0;
 
         try
         {
-            if(client.changeWorkingDirectory(remoteFilePath))
+            int index = remoteDeleteFilePath.lastIndexOf(SPLIT_FORWARD_SLASH);
+
+            String fileName = remoteDeleteFilePath.substring(index+1);
+
+            String filePathName = remoteDeleteFilePath.substring(0,index);
+
+            if(client.changeWorkingDirectory(filePathName))
             {
-                isExist = deleteProcess(fileName);
-                System.out.println("该文件在服务器中" +(isExist==250?"删除成功":"不存在")+",文件名称:" + fileName);
+                isExist = deleteDetailProcess(index,fileName);
             }
             else
             {
@@ -76,29 +69,38 @@ public class FtpDelete
      * 删除的过程
      * @return 返回是否删除文件的返回码：返回码为250，则删除该文件成功，那么代表该文件夹存在,返回码为550，代表删除失败
      */
-    public Integer deleteProcess(String fileName)
+    public Integer deleteDetailProcess(Integer index,String fileName)
     {
         int isExist = 0;
 
-        int index = remoteFilePath.lastIndexOf(SPLIT_FORWARD_SLASH);
-
-        System.out.println("开始删除指定文件：指定文件路径："+ remoteFilePath +",文件名称："+fileName);
+        System.out.println("开始删除指定文件：指定文件路径："+ remoteDeleteFilePath +",文件名称："+fileName);
 
 
         // 检验文件夹是否存在:通过删除该文件的方式来判定，如果返回码为250，则删除该文件成功，那么代表该文件夹存在,返回码为550，代表删除失败
         try
         {
             //切换到服务器的指定路径下
-            client.changeWorkingDirectory(remoteFilePath);
+            client.changeWorkingDirectory(remoteDeleteFilePath);
 
             isExist = client.dele(fileName);
 
+            System.out.println("该文件在服务器中" +(isExist==250?"删除成功":"不存在")+",文件名称:" + fileName);
         }
         catch (IOException e)
         {
-            System.out.println("failed to delete file by ftp ：remoteFilePath："+remoteFilePath+",exception:"+e);
+            System.out.println("failed to delete file by ftp ：remoteDeleteFilePath："+remoteDeleteFilePath+",exception:"+e);
         }
 
         return isExist;
+    }
+
+    public String getRemoteDeleteFilePath()
+    {
+        return remoteDeleteFilePath;
+    }
+
+    public void setRemoteDeleteFilePath(String remoteDeleteFilePath)
+    {
+        this.remoteDeleteFilePath = remoteDeleteFilePath;
     }
 }

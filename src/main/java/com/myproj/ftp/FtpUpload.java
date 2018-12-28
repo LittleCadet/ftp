@@ -14,21 +14,14 @@ import java.util.logging.Logger;
  */
 public class FtpUpload
 {
-    private String host = "10.211.95.106";
-
-    private String userName = "charging";
-
-    private String password = "huawei!Q2w";
-
-    private Integer reTryTimes = 3;
 
     private FTPClient client = FtpUtil.init();
 
     //指定上传到服务器的路径
-    private String remoteFilePath = "/home/dsdp/charging/ftpTest";
+    private String remoteUploadFilePath;
 
     //指定需要上传的本地文件路径
-    private String localFilePath = "D:\\fxDownload\\ftpTests.zip";
+    private String localUploadFilePath;
 
      //分隔符‘\’
      private final String SPLIT_BACKSLASH = "\\";
@@ -44,14 +37,10 @@ public class FtpUpload
     {
         Boolean flag = false;
 
-        //设置重试机制（3次）
-        for(int i = 0;i<reTryTimes;i++)
+        if (FtpUtil.connectToFtp())
         {
-            if(FtpUtil.connectToFtp(host,userName,password))
-            {
-                flag = uploadFileToFtp(flag);
-                break;
-            }
+            //开始上传操作
+            flag = uploadFileToFtp(flag);
         }
 
         return flag;
@@ -68,9 +57,9 @@ public class FtpUpload
         try
         {
             //用io去读本地文件
-            is = new FileInputStream(localFilePath);
+            is = new FileInputStream(localUploadFilePath);
 
-            String fileName = new File(localFilePath).getName();
+            String fileName = new File(localUploadFilePath).getName();
 
             //在远程服务器创建文件
             mkDir();
@@ -88,7 +77,7 @@ public class FtpUpload
             fileName = new String(fileName.getBytes("UTF-8"),controlEncoding);
 
             // ftp路径:路径必须具体到文件，否则上传不成功
-            String remote = (!remoteFilePath.endsWith(SPLIT_FORWARD_SLASH) ? remoteFilePath + SPLIT_FORWARD_SLASH : remoteFilePath) + fileName;
+            String remote = (!remoteUploadFilePath.endsWith(SPLIT_FORWARD_SLASH) ? remoteUploadFilePath + SPLIT_FORWARD_SLASH : remoteUploadFilePath) + fileName;
 
             System.out.println("正在用ftp上传指定文件到服务器");
 
@@ -99,7 +88,7 @@ public class FtpUpload
         }
         catch (FileNotFoundException e)
         {
-            System.out.println("uploadFileToFtp:failed,localFilePath:"+localFilePath+",\nexception:"+e);
+            System.out.println("uploadFileToFtp:failed,localUploadFilePath:"+localUploadFilePath+",\nexception:"+e);
         }
         catch (IOException e)
         {
@@ -124,15 +113,15 @@ public class FtpUpload
 
         try
         {
-            int index = remoteFilePath.lastIndexOf(SPLIT_FORWARD_SLASH);
+            int index = remoteUploadFilePath.lastIndexOf(SPLIT_FORWARD_SLASH);
 
-            int fileNameIndex = localFilePath.lastIndexOf(SPLIT_BACKSLASH);
+            int fileNameIndex = localUploadFilePath.lastIndexOf(SPLIT_BACKSLASH);
 
             //去除“/”
-            String packageName = remoteFilePath.substring(index+1);
+            String packageName = remoteUploadFilePath.substring(index+1);
 
             //如果文件不存在，则创建目录
-            if (!client.changeWorkingDirectory(remoteFilePath) )
+            if (!client.changeWorkingDirectory(remoteUploadFilePath) )
             {
                 System.out.println("正在用ftp在服务器上创建目录：");
 
@@ -148,8 +137,28 @@ public class FtpUpload
         }
         catch (IOException e)
         {
-            System.out.println("mkDir:fail,remoteFilePath:"+remoteFilePath+",\nexception:"+e);
+            System.out.println("mkDir:fail,remoteUploadFilePath:"+remoteUploadFilePath+",\nexception:"+e);
         }
+    }
+
+    public String getRemoteUploadFilePath()
+    {
+        return remoteUploadFilePath;
+    }
+
+    public void setRemoteUploadFilePath(String remoteUploadFilePath)
+    {
+        this.remoteUploadFilePath = remoteUploadFilePath;
+    }
+
+    public String getLocalUploadFilePath()
+    {
+        return localUploadFilePath;
+    }
+
+    public void setLocalUploadFilePath(String localUploadFilePath)
+    {
+        this.localUploadFilePath = localUploadFilePath;
     }
 }
 

@@ -15,21 +15,13 @@ import java.io.IOException;
  */
 public class FtpDownload
 {
-    private String host = "10.211.95.106";
-
-    private String userName = "charging";
-
-    private String password = "huawei!Q2w";
-
-    private Integer reTryTimes = 3;
-
     private FTPClient client = FtpUtil.init();
 
     //指定下载的服务器的路径
-    private String remoteFilePath = "/home/dsdp/charging/ftpTest/ftpTest.zip";
+    private String remoteDownloadFilePath;
 
     //指定需要下载到本地文件路径
-    private String localFilePath = "D:\\fxDownload";
+    private String localDownloadFilePath;
 
     //分隔符‘\’
     private final String SPLIT_BACKSLASH = "\\";
@@ -46,7 +38,7 @@ public class FtpDownload
         boolean flag = false;
 
         //建立ftp连接
-        FtpUtil.connectToFtp(host, userName, password);
+        FtpUtil.connectToFtp();
 
         //下载操作
         flag = downloadProcess();
@@ -65,16 +57,16 @@ public class FtpDownload
 
         FileOutputStream os = null;
 
-        String localFilePath = null;
+        String localDownloadFilePath = null;
         try
         {
-            String fileName = new File(remoteFilePath).getName();
+            String fileName = new File(remoteDownloadFilePath).getName();
 
             //判定本地目录是否存在,不存在，则创建目录
-            localFilePath = isLocalDir();
+            localDownloadFilePath = isLocalDir();
 
             //输出流必须精确到文件：如果精确到目录，会报fileNotFound Exception
-            os = new FileOutputStream(localFilePath);
+            os = new FileOutputStream(localDownloadFilePath);
 
             //linux设置本地被动模式，在windows默认打开
             client.enterLocalPassiveMode();
@@ -102,7 +94,7 @@ public class FtpDownload
         }
         catch (IOException e)
         {
-            System.out.println("something wrong with io exception,exception:"+e + "localFilePath:"+localFilePath);
+            System.out.println("something wrong with io exception,exception:"+e + "localDownloadFilePath:"+localDownloadFilePath);
         }
         finally
         {
@@ -119,9 +111,9 @@ public class FtpDownload
      */
     public boolean isRemoteDir()
     {
-        int remoteIndex = remoteFilePath.lastIndexOf(SPLIT_FORWARD_SLASH);
-        String remoteDir = remoteFilePath.substring(0,remoteIndex);
-        String fileName = new File(remoteFilePath).getName();
+        int remoteIndex = remoteDownloadFilePath.lastIndexOf(SPLIT_FORWARD_SLASH);
+        String remoteDir = remoteDownloadFilePath.substring(0,remoteIndex);
+        String fileName = new File(remoteDownloadFilePath).getName();
         try
         {
             //判定目录是否存在
@@ -160,23 +152,44 @@ public class FtpDownload
      */
     public String isLocalDir()
     {
-        File localFile = new File(localFilePath);
+        File localFile = new File(localDownloadFilePath);
 
-        File remoteFile = new File(remoteFilePath);
+        File remoteFile = new File(remoteDownloadFilePath);
 
-        String localFilePath = this.localFilePath;
+        String localDownloadFilePath = this.localDownloadFilePath;
         if (!localFile.exists())
         {
             System.out.println("本地文件目录创建" + (String.valueOf(localFile.mkdir()).equals("true") ? "成功！" : "失败！"));
         }
 
-        if(!SPLIT_BACKSLASH.equals(localFilePath.substring(localFilePath.lastIndexOf(SPLIT_BACKSLASH))))
+        if(!SPLIT_BACKSLASH.equals(localDownloadFilePath.substring(localDownloadFilePath.lastIndexOf(SPLIT_BACKSLASH))))
         {
-            localFilePath = this.localFilePath + SPLIT_BACKSLASH;
+            localDownloadFilePath = this.localDownloadFilePath + SPLIT_BACKSLASH;
         }
 
         //拼接本地路径，否则在创建输出流时，会报文件找不到异常
-        localFilePath = localFilePath + remoteFile.getName();
-        return localFilePath;
+        localDownloadFilePath = localDownloadFilePath + remoteFile.getName();
+
+        return localDownloadFilePath;
+    }
+
+    public String getRemoteDownloadFilePath()
+    {
+        return remoteDownloadFilePath;
+    }
+
+    public void setRemoteDownloadFilePath(String remoteDownloadFilePath)
+    {
+        this.remoteDownloadFilePath = remoteDownloadFilePath;
+    }
+
+    public String getLocalDownloadFilePath()
+    {
+        return localDownloadFilePath;
+    }
+
+    public void setLocalDownloadFilePath(String localDownloadFilePath)
+    {
+        this.localDownloadFilePath = localDownloadFilePath;
     }
 }
