@@ -32,7 +32,7 @@ public class ScanDirectory
     //文件名+时间：用于缓存服务器上的对应的文件的时间
     private Map<String,String> cache = new HashMap<String,String>();
 
-    private final String SPLIT_LINUX = "0 ";
+    private final String SPLIT_LINUX = " 0 ";
 
     public boolean scan()
     {
@@ -43,7 +43,7 @@ public class ScanDirectory
         isRemoteDir();
 
         //对比服务器的该文件的创建时间是否与缓存中的时间一致:不一致时，启动下载任务
-        if(!compareTimeWithServer())
+        if(compareTimeWithServer())
         {
             System.out.println("------------扫描的执行时间为：" + new Date() +"------------------");
             System.out.println("------------扫描完成，扫描结果为服务器上的文件有更新，开始调用下载任务-------------");
@@ -89,6 +89,8 @@ public class ScanDirectory
                 return false;
             }
 
+            //linux开启被动模式：因为ftpClient会告诉ftpServer开通一个端口来传输数据，如果不开启，那么ftpServer可能不开启某些端口，这是一种安全限制，所以在client.listFiles()时会出现阻塞
+            client.enterLocalPassiveMode();
             FTPFile[] ftpFiles = client.listFiles();
 
             for (FTPFile file : ftpFiles)
@@ -96,7 +98,7 @@ public class ScanDirectory
                 //判定该文件在服务器上是否存在
                 if (fileName.equals(file.getName()))
                 {
-                    String[] temps = file.getRawListing().split(SPLIT_FORWARD_SLASH);
+                    String[] temps = file.getRawListing().split(SPLIT_LINUX);
                     if(temps.length != 2)
                     {
                         System.out.println("文件的创建时间截取后，数组长度不为2");
@@ -108,7 +110,10 @@ public class ScanDirectory
                         String time = temps[1].split(" "+file.getName())[0];
 
                         //只有在文件存在的情况下，才会将对应的文件的创建时间放入缓存中
-                        cache.put(file.getName(),time);
+                        if(null == cache.get(file.getName()))
+                        {
+                            cache.put(file.getName(),time);
+                        }
 
                     }
                     return true;
@@ -155,7 +160,7 @@ public class ScanDirectory
                 //判定该文件在服务器上是否存在
                 if (fileName.equals(file.getName()))
                 {
-                    String[] temps = file.getRawListing().split(SPLIT_FORWARD_SLASH);
+                    String[] temps = file.getRawListing().split(SPLIT_LINUX);
                     if (temps.length != 2)
                     {
                         System.out.println("文件的创建时间截取后，数组长度不为2");
@@ -168,10 +173,16 @@ public class ScanDirectory
 
                         //比对时间
                         flag = compareProcess(fileName,time);
+
+                        //如果时间不一致，则更新缓存时间
+                        if(!flag)
+                        {
+                            cache.put(file.getName(),time);
+                        }
                         //比对结果
                         System.out.println("比对结果：" + (String.valueOf(flag).equals("true")?"一致":"不一致,开始执行下载任务"));
 
-                        return flag;
+                        return !flag;
                     }
                 }
             }
