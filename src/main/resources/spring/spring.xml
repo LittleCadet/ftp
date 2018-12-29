@@ -13,7 +13,7 @@
     http://www.springframework.org/schema/tx
     http://www.springframework.org/schema/tx/spring-tx.xsd">
 
-    <context:property-placeholder location="classpath:ftp.properties"/>
+    <context:property-placeholder location="classpath*:*.properties"/>
 
     <bean id="ftpDelete" class="com.myproj.ftp.FtpDelete">
         <property name="remoteDeleteFilePath" value="${remoteDeleteFilePath}"/>
@@ -29,12 +29,60 @@
         <property name="localUploadFilePath" value="${localUploadFilePath}"/>
     </bean>
 
+    <bean id="scanDirectory" class="com.myproj.ftp.ScanDirectory">
+        <property name="remoteDownloadFilePath" value="${remoteDownloadFilePath}"/>
+    </bean>
+
     <bean id="ftpUtil" class="com.myproj.tools.FtpUtil">
         <property name="host" value="${host}"/>
         <property name="account" value="${account}"/>
         <property name="password" value="${password}"/>
         <property name="timeOut" value="${timeOut}"/>
         <property name="reTryTimes" value="${reTryTimes}"/>
+    </bean>
+
+
+    <!-- 任务task1 的配置-->
+    <bean name="ftpDownloadJobBean" class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+        <property name="targetObject" ref="ftpDownload"/>
+        <property name="targetMethod" value="download"/>
+        <property name="concurrent" value="false"/>
+    </bean>
+
+    <!--Quartz的定时任务1 的触发器 -->
+    <bean id="ftpDownloadTrigger"
+          class="org.springframework.scheduling.quartz.CronTriggerFactoryBean">
+        <property name="jobDetail" ref="ftpDownloadJobBean">
+        </property>
+        <property name="cronExpression" value="${download.cronExpression}" />
+    </bean>
+
+    <!-- 任务task2 的配置-->
+    <bean name="scanDirectoryJobBean" class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+        <property name="targetObject" ref="scanDirectory"/>
+        <property name="targetMethod" value="scan"/>
+        <property name="concurrent" value="false"/>
+    </bean>
+
+    <!--Quartz的定时任务2 的触发器 -->
+    <bean id="scanDirectoryrigger"
+          class="org.springframework.scheduling.quartz.CronTriggerFactoryBean">
+        <property name="jobDetail" ref="scanDirectoryJobBean">
+        </property>
+        <property name="cronExpression" value="${download.cronExpression}" />
+    </bean>
+
+    <!-- 中心调度器-->
+    <bean id="schedulerFactoryBean" class="org.springframework.scheduling.quartz.SchedulerFactoryBean" autowire="no">
+        <property name="triggers">
+            <list>
+                <!-- 执行定时下载服务器上文件-->
+                <!--<ref bean="ftpDownloadTrigger" />-->
+
+                <!-- 执行定时扫描服务器上的文件，一旦变动即可触发下载任务-->
+                <ref bean="scanDirectoryrigger" />
+            </list>
+        </property>
     </bean>
 
 </beans>

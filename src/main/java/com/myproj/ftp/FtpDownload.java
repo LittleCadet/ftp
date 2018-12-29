@@ -7,6 +7,7 @@ import org.apache.commons.net.ftp.FTPFile;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.util.Date;
 
 /**
  * ftp的下载操作
@@ -29,6 +30,9 @@ public class FtpDownload
     //分隔符“/”
     private final String SPLIT_FORWARD_SLASH = "/";
 
+    //计数：ftp下载动作一共执行多少次
+    private int count ;
+
     /**
      * 下载文件
      * @return 判定是否下载完成
@@ -43,6 +47,11 @@ public class FtpDownload
         //下载操作
         flag = downloadProcess();
 
+        System.out.println("-------------------在此时执行过一次："+ new Date() + "----------------------");
+
+        count ++;
+
+        System.out.println("-------------------目前一共执行过"+ count + "次----------------------");
         return flag;
 
     }
@@ -157,6 +166,7 @@ public class FtpDownload
         File remoteFile = new File(remoteDownloadFilePath);
 
         String localDownloadFilePath = this.localDownloadFilePath;
+
         if (!localFile.exists())
         {
             System.out.println("本地文件目录创建" + (String.valueOf(localFile.mkdir()).equals("true") ? "成功！" : "失败！"));
@@ -191,5 +201,15 @@ public class FtpDownload
     public void setLocalDownloadFilePath(String localDownloadFilePath)
     {
         this.localDownloadFilePath = localDownloadFilePath;
+    }
+
+    public Integer getCount()
+    {
+        return count;
+    }
+
+    public void setCount(Integer count)
+    {
+        this.count = count;
     }
 }

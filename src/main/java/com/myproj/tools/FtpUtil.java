@@ -58,14 +58,20 @@ public class FtpUtil
     public static boolean connectToFtpProcess()
     {
         {
-            Boolean flag = false;
+            Boolean flag = true;
             try
             {
-                //根据ip+port连接ftp
-                client.connect(host);
+                if(!client.isConnected())
+                {
+                    //根据ip+port连接ftp
+                    client.connect(host);
 
-                //登录ftp
-                flag = client.login(account,password);
+                    //登录ftp
+                    flag = client.login(account,password);
+
+                    System.out.println("用户登录ftp" +(flag.toString().equals("true") ?"成功":"失败"));
+
+                }
 
                 if(!flag)
                 {
@@ -80,7 +86,7 @@ public class FtpUtil
                 //设置socket的过期时间
                 client.setSoTimeout(Integer.valueOf(timeOut));
 
-                System.out.println("用户登录ftp" +(flag.toString().equals("true") ?"成功":"失败"));
+
             }
             catch (IOException e)
             {
