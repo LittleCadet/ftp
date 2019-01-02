@@ -25,10 +25,18 @@ public class FtpDelete
      */
     public boolean deleteFile()
     {
-        //连接到ftp
-        FtpUtil.connectToFtp();
+        boolean flag = false;
 
-        return deleteProcess();
+        if(isNotNull())
+        {
+            //连接到ftp
+            if(FtpUtil.connectToFtp())
+            {
+                flag = deleteProcess();
+            }
+        }
+
+        return flag;
     }
 
     public boolean deleteProcess()
@@ -92,6 +100,20 @@ public class FtpDelete
         }
 
         return isExist;
+    }
+
+    /**
+     * 对remoteDeleteFilePath判空
+     * @return 不为空时，返回true
+     */
+    public boolean isNotNull()
+    {
+        if(null == remoteDeleteFilePath)
+        {
+            System.out.println("remoteDeleteFilePath为空，删除操作停止");
+            return false;
+        }
+        return true;
     }
 
     public String getRemoteDeleteFilePath()

@@ -37,10 +37,13 @@ public class FtpUpload
     {
         Boolean flag = false;
 
-        if (FtpUtil.connectToFtp())
+        if(isNotNull())
         {
-            //开始上传操作
-            flag = uploadFileToFtp(flag);
+            if (FtpUtil.connectToFtp())
+            {
+                //开始上传操作
+                flag = uploadFileToFtp(flag);
+            }
         }
 
         return flag;
@@ -139,6 +142,26 @@ public class FtpUpload
         {
             System.out.println("mkDir:fail,remoteUploadFilePath:"+remoteUploadFilePath+",\nexception:"+e);
         }
+    }
+
+    /**
+     * 对remoteUploadFilePath，localUploadFilePath判空
+     * @return 都不为空时，返回true
+     */
+    public boolean isNotNull()
+    {
+        if(null == remoteUploadFilePath)
+        {
+            System.out.println("remoteUploadFilePath为空，上传操作停止");
+            return false;
+        }
+
+        if(null == localUploadFilePath)
+        {
+            System.out.println("localUploadFilePath为空，上传操作停止");
+            return false;
+        }
+        return true;
     }
 
     public String getRemoteUploadFilePath()

@@ -16,42 +16,46 @@ import java.util.Date;
  */
 public class FtpDownload
 {
-    private FTPClient client = FtpUtil.init();
+    private static FTPClient client = FtpUtil.init();
 
     //指定下载的服务器的路径
-    private String remoteDownloadFilePath;
+    private static String remoteDownloadFilePath;
 
     //指定需要下载到本地文件路径
-    private String localDownloadFilePath;
+    private static String localDownloadFilePath;
 
     //分隔符‘\’
-    private final String SPLIT_BACKSLASH = "\\";
+    private static final String SPLIT_BACKSLASH = "\\";
 
     //分隔符“/”
-    private final String SPLIT_FORWARD_SLASH = "/";
+    private static final String SPLIT_FORWARD_SLASH = "/";
 
     //计数：ftp下载动作一共执行多少次
-    private int count ;
+    private static int count ;
 
     /**
      * 下载文件
      * @return 判定是否下载完成
      */
-    public boolean download()
+    public static boolean download()
     {
         boolean flag = false;
 
-        //建立ftp连接
-        FtpUtil.connectToFtp();
+        if(isNotNull())
+        {
+            //建立ftp连接
+            if(FtpUtil.connectToFtp())
+            {
+                //下载操作
+                flag = downloadProcess();
 
-        //下载操作
-        flag = downloadProcess();
+                System.out.println("------------文件下载在此时执行过一次："+ new Date() + "------------");
 
-        System.out.println("-------------------在此时执行过一次："+ new Date() + "----------------------");
+                count ++;
 
-        count ++;
-
-        System.out.println("-------------------目前一共执行过"+ count + "次----------------------");
+                System.out.println("------------文件下载目前一共执行过"+ count + "次------------");
+            }
+        }
         return flag;
 
     }
@@ -60,7 +64,7 @@ public class FtpDownload
      * 下载的具体操作
      * @return  判定是否下载完成
      */
-    public boolean downloadProcess()
+    public static boolean downloadProcess()
     {
         Boolean flag = false;
 
@@ -99,6 +103,8 @@ public class FtpDownload
             //下载操作
             flag = client.retrieveFile(fileName,os);
 
+
+
             System.out.println("用ftp下载"+(String.valueOf(flag).equals("true")?"成功！":"失败！"));
         }
         catch (IOException e)
@@ -118,7 +124,7 @@ public class FtpDownload
      * 判定服务器的文件是否是否存在
      * @return 判定服务器的文件是否是否存在
      */
-    public boolean isRemoteDir()
+    public static boolean isRemoteDir()
     {
         int remoteIndex = remoteDownloadFilePath.lastIndexOf(SPLIT_FORWARD_SLASH);
         String remoteDir = remoteDownloadFilePath.substring(0,remoteIndex);
@@ -159,13 +165,13 @@ public class FtpDownload
      * 判定本地目录是否存在
      * @return 判定本地目录是否存在
      */
-    public String isLocalDir()
+    public static String isLocalDir()
     {
         File localFile = new File(localDownloadFilePath);
 
         File remoteFile = new File(remoteDownloadFilePath);
 
-        String localDownloadFilePath = this.localDownloadFilePath;
+        String localDownloadFilePath = FtpDownload.localDownloadFilePath;
 
         if (!localFile.exists())
         {
@@ -174,13 +180,34 @@ public class FtpDownload
 
         if(!SPLIT_BACKSLASH.equals(localDownloadFilePath.substring(localDownloadFilePath.lastIndexOf(SPLIT_BACKSLASH))))
         {
-            localDownloadFilePath = this.localDownloadFilePath + SPLIT_BACKSLASH;
+            localDownloadFilePath = FtpDownload.localDownloadFilePath + SPLIT_BACKSLASH;
         }
 
         //拼接本地路径，否则在创建输出流时，会报文件找不到异常
         localDownloadFilePath = localDownloadFilePath + remoteFile.getName();
 
         return localDownloadFilePath;
+    }
+
+    /**
+     * 对remoteDownloadFilePath，localDownloadFilePath判空
+     * @return 都不为空时，返回true
+     */
+    public static boolean isNotNull()
+    {
+        if(null == remoteDownloadFilePath)
+        {
+            System.out.println("remoteDownloadFilePath为空，下载操作停止");
+
+            return false;
+        }
+
+        if(null == localDownloadFilePath)
+        {
+            System.out.println("localDownloadFilePath为空，下载操作停止");
+            return false;
+        }
+        return true;
     }
 
     public String getRemoteDownloadFilePath()

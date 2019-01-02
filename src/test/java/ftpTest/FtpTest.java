@@ -76,15 +76,14 @@ public class FtpTest
         Thread thread = new Thread();
         try
         {
-            System.out.println("-------------当前时间是：" + new Date() + "------------------");
-
             //30秒内不能有下载任务
             Thread.sleep(60000);
 
+            System.out.println("-------------开始执行文件上传操作-------------");
             //更新服务器上的文件的时间
             upload();
 
-            System.out.println("-------------当前时间是：" + new Date() + "------------------");
+            System.out.println("-------------文件上传完成的时间是：" + new Date() + "------------------");
 
             //开始执行下载任务，但只有一次下载
             Thread.sleep(30000);
