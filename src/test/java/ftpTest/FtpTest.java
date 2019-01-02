@@ -55,6 +55,7 @@ public class FtpTest
     @Test
     public void scheduleDownload()
     {
+        System.out.println("-------------当前的时间是：" + new Date() + "------------------");
         Thread thread = new Thread();
         try
         {
@@ -76,10 +77,13 @@ public class FtpTest
         Thread thread = new Thread();
         try
         {
-            //30秒内不能有下载任务
-            Thread.sleep(60000);
+            System.out.println();
+
+            //20秒内只能有一次下载动作
+            Thread.sleep(20000);
 
             System.out.println("-------------开始执行文件上传操作-------------");
+
             //更新服务器上的文件的时间
             upload();
 
@@ -87,7 +91,36 @@ public class FtpTest
 
             //开始执行下载任务，但只有一次下载
             Thread.sleep(30000);
+        }
+        catch (InterruptedException e)
+        {
+            e.printStackTrace();
+        }
+    }
 
+
+    /**
+     * 运行两个定时任务：定时下载+定时扫描
+     */
+    @Test
+    public void scheduleBoth()
+    {
+        System.out.println("-------------当前的时间是：" + new Date() + "------------------");
+        Thread thread = new Thread();
+        try
+        {
+            //第5秒有下载任务，第20秒有下载任务
+            Thread.sleep(20000);
+
+            System.out.println("-------------开始执行文件上传操作-------------");
+
+            //更新服务器上的文件的时间
+            upload();
+
+            System.out.println("-------------文件上传完成的时间是：" + new Date() + "------------------");
+
+            //会立刻执行一次下载任务
+            Thread.sleep(40000);
         }
         catch (InterruptedException e)
         {
