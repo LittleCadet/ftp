@@ -1,5 +1,6 @@
 package ftpTest;
 
+import com.myproj.ftp.FtpBatchUpload;
 import com.myproj.ftp.FtpDelete;
 import com.myproj.ftp.FtpDownload;
 import com.myproj.ftp.FtpUpload;
@@ -47,6 +48,16 @@ public class FtpTest
     {
         FtpDownload ftpDownload = (FtpDownload)context.getBean("ftpDownload");
         Assert.assertTrue(ftpDownload.download());
+    }
+
+    /**
+     * 批量上传到服务器
+     */
+    @Test
+    public void batchUpload()
+    {
+        FtpBatchUpload ftpBatchUpload = (FtpBatchUpload)context.getBean("ftpBatchUpload");
+        Assert.assertTrue(ftpBatchUpload.batchUpload());
     }
 
     /**
@@ -109,7 +120,7 @@ public class FtpTest
         Thread thread = new Thread();
         try
         {
-            //第5秒有下载任务，第20秒有下载任务
+            //第5秒有下载任务【download】，刚开始运行时有下载任务[scanDirectory]
             Thread.sleep(20000);
 
             System.out.println("-------------开始执行文件上传操作-------------");

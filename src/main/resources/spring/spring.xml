@@ -29,6 +29,10 @@
         <property name="localUploadFilePath" value="${localUploadFilePath}"/>
     </bean>
 
+    <bean id = "ftpBatchUpload" class="com.myproj.ftp.FtpBatchUpload">
+        <property name="batchUploadFilePath" value="${batchUploadFilePath}"></property>
+    </bean>
+
     <bean id="scanDirectory" class="com.myproj.ftp.ScanDirectory">
         <property name="remoteDownloadFilePath" value="${remoteDownloadFilePath}"/>
     </bean>
