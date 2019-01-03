@@ -1,0 +1,4 @@
+批量删除服务器上的文件的对应目录，如下：
+/home/dsdp/order/ftpTest/ftpTest.zip
+/home/dsdp/order/ftpTest1/ftpTest1.zip
+/home/dsdp/order/ftpTest2/

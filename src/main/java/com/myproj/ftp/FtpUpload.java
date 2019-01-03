@@ -42,7 +42,7 @@ public class FtpUpload
             if (FtpUtil.connectToFtp())
             {
                 //开始上传操作
-                flag = uploadFileToFtp(flag);
+                flag = uploadFileToFtp();
             }
         }
 
@@ -51,11 +51,11 @@ public class FtpUpload
 
     /**
      * 创建服务器文件，将二进制的文件上传到ftp
-     * @param flag：是否上传成功
      * @return 判定是否上传成功
      */
-    public boolean uploadFileToFtp(Boolean flag)
+    public boolean uploadFileToFtp()
     {
+        Boolean flag = false;
         InputStream is = null;
         try
         {
@@ -117,8 +117,6 @@ public class FtpUpload
         try
         {
             int index = remoteUploadFilePath.lastIndexOf(SPLIT_FORWARD_SLASH);
-
-            int fileNameIndex = localUploadFilePath.lastIndexOf(SPLIT_BACKSLASH);
 
             //去除“/”
             String packageName = remoteUploadFilePath.substring(index+1);

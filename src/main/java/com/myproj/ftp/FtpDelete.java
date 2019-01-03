@@ -87,9 +87,6 @@ public class FtpDelete
         // 检验文件夹是否存在:通过删除该文件的方式来判定，如果返回码为250，则删除该文件成功，那么代表该文件夹存在,返回码为550，代表删除失败
         try
         {
-            //切换到服务器的指定路径下
-            client.changeWorkingDirectory(remoteDeleteFilePath);
-
             isExist = client.dele(fileName);
 
             System.out.println("该文件在服务器中" +(isExist==250?"删除成功":"不存在")+",文件名称:" + fileName);
