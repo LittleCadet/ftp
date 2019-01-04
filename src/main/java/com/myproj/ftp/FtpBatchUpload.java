@@ -6,10 +6,7 @@ import org.apache.commons.net.ftp.FTPClient;
 import org.springframework.util.CollectionUtils;
 
 import java.io.*;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * ftp的批量删除，支持不同目录下的文件上传到指定目录
@@ -122,9 +119,9 @@ public class FtpBatchUpload
 
         if (!CollectionUtils.isEmpty(fails))
         {
+            System.out.println("****************上传失败的文件路径****************");
             for (Map.Entry<String, String> fail : fails.entrySet())
             {
-                System.out.println("****************上传失败的文件路径****************");
                 System.out.println("localUploadFilePath:" + fail.getKey());
                 System.out.println("remoteUploadFilePath:" + fail.getValue());
             }
@@ -189,14 +186,23 @@ public class FtpBatchUpload
 
             while(null != (line = br.readLine()))
             {
-                String[] paths = line.split("              ");
-                for(String path:paths)
+                String[] paths = line.split(" ");
+                List<String> li = new ArrayList<String>();
+                for(int i = 0;i<paths.length;i++)
+                {
+                    if(!("".equals(paths[i])))
+                    {
+                        li.add(paths[i]);
+                    }
+                }
+
+                for(String path:li)
                 {
                     if (line.contains(SPLIT_BACKSLASH) && line.contains(SPLIT_FORWARD_SLASH) && null != path.trim())
                     {
-                        if (null != paths[0] && null != paths[1])
+                        if (null != li.get(0) && null != li.get(1))
                         {
-                            filePaths.put(paths[0].trim(), paths[1].trim());
+                            filePaths.put(li.get(0).trim(), li.get(1).trim());
                         }
                     }
                     else if(line.contains(SPLIT_BACKSLASH) || line.contains(SPLIT_FORWARD_SLASH))
