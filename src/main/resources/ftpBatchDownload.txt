@@ -1,0 +1,5 @@
+将服务器上的任意目录下的文件批量下载到本地的任意位置，如下：
+服务器目录                                           本地目录
+/home/dsdp/order/ftpTest/ftpTest.zip                D:\fxDownload\ftpTest
+/home/dsdp/order/ftpTest1/ftpTest1.zip              D:\fxDownload\ftpTest1
+/home/dsdp/order/ftpTest2/              D:\fxDownload\ftpTest2

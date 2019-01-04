@@ -4,4 +4,4 @@ D:\fxDownload\ftpTest.zip               /home/dsdp/order/ftpTest
 D:\fxDownload\ftpTest1.zip              /home/dsdp/order/ftpTest1
 D:\fxDownload\ftpTest2.zip              /home/dsdp/order/ftpTest2
 D:\fxDownload\ftpTest3.zip              /home/dsdp/order/ftpTest2
-D:\fxDownload\ftpTest               /home/dsdp/order/ftpTest2
+D:\fxDownload\ftpTest\               /home/dsdp/order/ftpTest2

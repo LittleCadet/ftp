@@ -80,7 +80,7 @@ public class FtpBatchUpload
 
                 int index = localUploadFilePath.lastIndexOf(SPLIT_BACKSLASH);
 
-                //获取最后一个“//”之后的文件名
+                //获取最后一个“\\”之后的文件名
                 String lastFileName = localUploadFilePath.substring(index+1);
 
                 //如果localUploadFilePath是目录，则需要获取到所有该目录下的文件，之后上传到指定的ftp的目录
@@ -125,8 +125,8 @@ public class FtpBatchUpload
             for (Map.Entry<String, String> fail : fails.entrySet())
             {
                 System.out.println("****************上传失败的文件路径****************");
-                System.out.println("localUploadFilePath:" + localUploadFilePath);
-                System.out.println("remoteUploadFilePath:" + remoteUploadFilePath);
+                System.out.println("localUploadFilePath:" + fail.getKey());
+                System.out.println("remoteUploadFilePath:" + fail.getValue());
             }
         }
         else
@@ -201,7 +201,7 @@ public class FtpBatchUpload
                     }
                     else if(line.contains(SPLIT_BACKSLASH) || line.contains(SPLIT_FORWARD_SLASH))
                     {
-                        System.out.println("在ftpBatchOperation.txt文件中的数据有异常，请及时处理！");
+                        System.out.println("在ftpBatchUpload.txt文件中的数据有异常，请及时处理！");
 
                         return false;
                     }

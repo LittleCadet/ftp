@@ -30,11 +30,15 @@
     </bean>
 
     <bean id = "ftpBatchUpload" class="com.myproj.ftp.FtpBatchUpload">
-        <property name="batchUploadFilePath" value="${batchUploadFilePath}"></property>
+        <property name="batchUploadFilePath" value="${batchUploadFilePath}"/>
     </bean>
 
     <bean id = "ftpBatchDelete" class="com.myproj.ftp.FtpBatchDelete">
-        <property name="batchDeleteFilePath" value="${batchDeleteFilePath}"></property>
+        <property name="batchDeleteFilePath" value="${batchDeleteFilePath}"/>
+    </bean>
+
+    <bean id = "ftpBatchDownload" class="com.myproj.ftp.FtpBatchDownload">
+        <property name="batchDownloadFilePath" value="${batchDownloadFilePath}"/>
     </bean>
 
     <bean id="scanDirectory" class="com.myproj.ftp.ScanDirectory">
@@ -75,8 +79,7 @@
     <!--Quartz的定时任务2 的触发器 -->
     <bean id="scanDirectoryrigger"
           class="org.springframework.scheduling.quartz.CronTriggerFactoryBean">
-        <property name="jobDetail" ref="scanDirectoryJobBean">
-        </property>
+        <property name="jobDetail" ref="scanDirectoryJobBean"/>
         <property name="cronExpression" value="${scan.cronExpression}" />
     </bean>
 

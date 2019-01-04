@@ -58,6 +58,16 @@ public class FtpTest
         Assert.assertTrue(ftpBatchUpload.batchUpload());
     }
 
+    /**
+     * 批量从服务器下载到本地
+     */
+    @Test
+    public void batchDownload()
+    {
+        FtpBatchDownload ftpBatchDownload = (FtpBatchDownload)context.getBean("ftpBatchDownload");
+        Assert.assertTrue(ftpBatchDownload.batchDownload());
+    }
+
 
     /**
      * 批量删除服务器上的文件
