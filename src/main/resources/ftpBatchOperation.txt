@@ -1,5 +1,0 @@
-批量本地文件批量上传到服务器对应目录下：
-本地文件目录                            服务器目录
-D:\fxDownload\ftpTest.zip               /home/dsdp/order/ftpTest/a
-D:\fxDownload\ftpTest1.zip              /home/dsdp/order/ftpTest1
-D:\fxDownload\ftpTest2.zip              /home/dsdp/order/ftpTest2

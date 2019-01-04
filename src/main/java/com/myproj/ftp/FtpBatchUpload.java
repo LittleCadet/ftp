@@ -32,6 +32,9 @@ public class FtpBatchUpload
     //分隔符“/”
     private final String SPLIT_FORWARD_SLASH = "/";
 
+    //是文件的标志“.”
+    private final String IS_FILE = ".";
+
     //批量上传的文本路径
     private String batchUploadFilePath;
 
@@ -63,72 +66,44 @@ public class FtpBatchUpload
     {
         int count = 0;
         Boolean flag = false;
-        InputStream is = null;
+        FileInputStream is = null;
         String localUploadFilePath = null;
-        String remoteUploadFilePath =null;
+        String remoteUploadFilePath = null;
         List<Boolean> result = new ArrayList<Boolean>();
+
         try
         {
-            for(Map.Entry<String,String> entry : filePaths.entrySet())
+            for (Map.Entry<String, String> entry : filePaths.entrySet())
             {
                 localUploadFilePath = entry.getKey();
                 remoteUploadFilePath = entry.getValue();
-                System.out.println("localUploadFilePath:"+localUploadFilePath+"\n"+"remoteUploadFilePath:"+remoteUploadFilePath);
-                //用io去读本地文件
-                is = new FileInputStream(localUploadFilePath);
 
-                String fileName = new File(localUploadFilePath).getName();
+                int index = localUploadFilePath.lastIndexOf(SPLIT_BACKSLASH);
 
-                //在远程服务器创建文件
-                mkDir(remoteUploadFilePath);
+                //获取最后一个“//”之后的文件名
+                String lastFileName = localUploadFilePath.substring(index+1);
 
-                //linux开启本地被动模式，windows会默认自动开启
-                client.enterLocalPassiveMode();
-
-                //设置二进制
-                client.setFileType(FTP.BINARY_FILE_TYPE);
-
-                //获得服务器的文本编码格式
-                String controlEncoding = client.getControlEncoding();
-
-                //将文件名由utf-8转化为ftp的文字编码格式
-                fileName = new String(fileName.getBytes("UTF-8"),controlEncoding);
-
-                // ftp路径:路径必须具体到文件，否则上传不成功
-                String remote = (!remoteUploadFilePath.endsWith(SPLIT_FORWARD_SLASH) ? remoteUploadFilePath + SPLIT_FORWARD_SLASH : remoteUploadFilePath) + fileName;
-
-                System.out.println("正在用ftp上传指定文件到服务器");
-
-                //用ftpClient上传到服务器
-                flag = client.storeFile(remote, is);
-
-                if(!flag)
+                //如果localUploadFilePath是目录，则需要获取到所有该目录下的文件，之后上传到指定的ftp的目录
+                if (!lastFileName.contains(IS_FILE))
                 {
-                    fails.put(localUploadFilePath,remoteUploadFilePath);
+                    File file = new File(localUploadFilePath);
+                    File[] files = file.listFiles();
+                    for (File localFile : files)
+                    {
+                        System.out.println("localUploadFilePath:" + localFile.toString() + "\n" + "remoteUploadFilePath:" + remoteUploadFilePath);
+                        //上传细节处理
+                        result = uploadProcess(localFile.toString(), remoteUploadFilePath, result,is);
+                    }
+                }
+                else
+                {
+                    System.out.println("localUploadFilePath:" + localUploadFilePath + "\n" + "remoteUploadFilePath:" + remoteUploadFilePath);
+
+                    //上传细节处理
+                    //如果localUploadFilePath是文件，则直接上传即可
+                    result = uploadProcess(localUploadFilePath, remoteUploadFilePath, result,is);
                 }
 
-                result.add(flag);
-
-                System.out.println("用ftp传输二进制文件" +(flag.toString().equals("true") ?"成功":"失败"));
-            }
-
-            if(!CollectionUtils.isEmpty(fails))
-            {
-                for(Map.Entry<String,String> fail:fails.entrySet())
-                {
-                    System.out.println("****************上传失败的文件路径****************");
-                    System.out.println("localUploadFilePath:"+localUploadFilePath);
-                    System.out.println("remoteUploadFilePath:"+remoteUploadFilePath);
-                }
-            }
-            else
-            {
-                System.out.println("--------------全部上传成功--------------");
-            }
-
-            if(result.contains(false))
-            {
-                return false;
             }
         }
         catch (FileNotFoundException e)
@@ -143,6 +118,25 @@ public class FtpBatchUpload
         {
             //关闭资源
             FtpUtil.closeResources(is,null,client);
+        }
+
+        if (!CollectionUtils.isEmpty(fails))
+        {
+            for (Map.Entry<String, String> fail : fails.entrySet())
+            {
+                System.out.println("****************上传失败的文件路径****************");
+                System.out.println("localUploadFilePath:" + localUploadFilePath);
+                System.out.println("remoteUploadFilePath:" + remoteUploadFilePath);
+            }
+        }
+        else
+        {
+            System.out.println("--------------全部上传成功--------------");
+        }
+
+        if (result.contains(false))
+        {
+            return false;
         }
         return true;
     }
@@ -238,6 +232,59 @@ public class FtpBatchUpload
         }
 
         return true;
+    }
+
+    /**
+     * 上传的具体细节
+     * @param localUploadFilePath 本地文件路径
+     * @param remoteUploadFilePath 服务器文件路径
+     * @param result 布尔值的list
+     * @return 每一个上传的成功与否
+     */
+    public List<Boolean> uploadProcess(String localUploadFilePath,String remoteUploadFilePath,List<Boolean> result,FileInputStream is)
+        throws IOException
+    {
+        Boolean flag = false;
+
+        //用io去读本地文件
+        is = new FileInputStream(localUploadFilePath);
+
+        String fileName = new File(localUploadFilePath).getName();
+
+        //在远程服务器创建文件
+        mkDir(remoteUploadFilePath);
+
+        //linux开启本地被动模式，windows会默认自动开启
+        client.enterLocalPassiveMode();
+
+        //设置二进制
+        client.setFileType(FTP.BINARY_FILE_TYPE);
+
+        //获得服务器的文本编码格式
+        String controlEncoding = client.getControlEncoding();
+
+        //将文件名由utf-8转化为ftp的文字编码格式
+        fileName = new String(fileName.getBytes("UTF-8"), controlEncoding);
+
+        // ftp路径:路径必须具体到文件，否则上传不成功
+        String remote = (!remoteUploadFilePath.endsWith(SPLIT_FORWARD_SLASH) ?
+            remoteUploadFilePath + SPLIT_FORWARD_SLASH :
+            remoteUploadFilePath) + fileName;
+
+        System.out.println("正在用ftp上传指定文件到服务器");
+
+        //用ftpClient上传到服务器
+        flag = client.storeFile(remote, is);
+
+        if (!flag)
+        {
+            fails.put(localUploadFilePath, remoteUploadFilePath);
+        }
+
+        result.add(flag);
+
+        System.out.println("用ftp传输二进制文件" + (flag.toString().equals("true") ? "成功" : "失败"));
+        return result;
     }
 
     public String getBatchUploadFilePath()
