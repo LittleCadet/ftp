@@ -1,7 +1,0 @@
-bbbbb
-aaaaaaaa
-<<<<<<< HEAD
-bbbbb
-=======
-test
->>>>>>> e2f6bde7fc60ce0ba7db65e8f03ba181e7f5c29d
