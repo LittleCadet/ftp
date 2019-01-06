@@ -49,7 +49,11 @@ public class FtpUtil
     {
         for(int i = 0;i< Integer.valueOf(reTryTimes);i++)
         {
-            return connectToFtpProcess();
+            if(connectToFtpProcess())
+            {
+                return true;
+            }
+            System.out.println("第" + (i+1) + "次连接失败：ip："+host);
         }
 
         return false;
