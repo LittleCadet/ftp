@@ -11,7 +11,7 @@ import java.io.IOException;
  */
 public class FtpDelete
 {
-    //指定上传到服务器的路径
+    //指定删除服务器的路径
     private String remoteDeleteFilePath;
 
     //分隔符“/”

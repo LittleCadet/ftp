@@ -26,7 +26,7 @@ public class FtpBatchDelete
 
     private final String IS_FILE = ".";
 
-    //指定上传到服务器的路径
+    //指定需要删除服务器的路径
     private List<String> remoteDeleteFilePaths = new ArrayList<String>();
 
     //删除失败的文件路径

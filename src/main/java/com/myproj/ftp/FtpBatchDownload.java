@@ -32,7 +32,7 @@ public class FtpBatchDownload
     //指定下载到本地的路径：服务器路径：本地路径
     private Map<String,String> filePaths = new HashMap<String,String>();
 
-    //存放上传失败的文件的路径
+    //存放下载失败的文件的路径
     private Map<String,String> fails = new HashMap<String,String>();
 
     /**
@@ -82,7 +82,7 @@ public class FtpBatchDownload
 
                 if(null != lastFileName)
                 {
-                    //如果remoteDownloadFilePath是目录，则需要获取到所有该目录下的文件，之后上传到指定的ftp的目录
+                    //如果remoteDownloadFilePath是目录，则需要获取到所有该目录下的文件，之后下载到指定本地目录
                     if (!lastFileName.contains(IS_FILE))
                     {
                         File file = new File(remoteDownloadFilePath);
@@ -122,7 +122,7 @@ public class FtpBatchDownload
                         System.out.println("remoteDownloadFilePath:" + remoteDownloadFilePath + "\n" + "localDownloadFilePath:" + localDownloadFilePath);
 
                         //下载细节处理
-                        //如果remoteDownloadFilePath是文件，则直接上传即可
+                        //如果remoteDownloadFilePath是文件，则直接下载即可
                         result = detailProcess(os,localDownloadFilePath,remoteDownloadFilePath,result);
                     }
                 }
@@ -147,16 +147,16 @@ public class FtpBatchDownload
 
         if (!CollectionUtils.isEmpty(fails))
         {
-            System.out.println("****************上传失败的文件路径****************");
+            System.out.println("****************下载失败的文件路径****************");
             for (Map.Entry<String, String> fail : fails.entrySet())
             {
-                System.out.println("localUploadFilePath:" + fail.getKey());
-                System.out.println("remoteUploadFilePath:" + fail.getValue());
+                System.out.println("remoteDownloadFilePath:" + fail.getKey());
+                System.out.println("localDownloadFilePath:" + fail.getValue());
             }
         }
         else
         {
-            System.out.println("--------------全部上传成功--------------");
+            System.out.println("--------------全部下载成功--------------");
         }
 
         if (result.contains(false))
@@ -186,7 +186,6 @@ public class FtpBatchDownload
                 //关闭资源
                 FtpUtil.closeResources(null, null, client);
 
-                System.exit(0);
                 return false;
             }
 
@@ -336,7 +335,11 @@ public class FtpBatchDownload
             //关闭资源
             FtpUtil.closeResources(null, os, client);
 
-            System.exit(0);
+            fails.put(remoteDownloadFilePath,localDownloadFilePath);
+
+            result.add(false);
+
+            return result;
         }
 
         System.out.println("用ftp下载开始");
