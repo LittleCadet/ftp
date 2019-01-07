@@ -64,6 +64,8 @@ public class FtpDelete
         catch (IOException e)
         {
             System.out.println("something wrong with changing directory by ftp：exception:"+e);
+
+            return false;
         }
         finally
         {
@@ -94,6 +96,8 @@ public class FtpDelete
         catch (IOException e)
         {
             System.out.println("failed to delete file by ftp ：remoteDeleteFilePath："+remoteDeleteFilePath+",exception:"+e);
+
+            isExist = 550;
         }
 
         return isExist;

@@ -88,10 +88,10 @@
         <property name="triggers">
             <list>
                 <!-- 执行定时下载服务器上文件-->
-                <!--<ref bean="ftpDownloadTrigger" />-->
+                <ref bean="ftpDownloadTrigger" />
 
                 <!-- 执行定时扫描服务器上的文件，一旦变动即可触发下载任务-->
-                <!--<ref bean="scanDirectoryrigger" />-->
+                <ref bean="scanDirectoryrigger" />
             </list>
         </property>
     </bean>

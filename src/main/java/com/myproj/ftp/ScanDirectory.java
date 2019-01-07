@@ -31,7 +31,7 @@ public class ScanDirectory
     //文件名+时间：用于缓存服务器上的对应的文件的时间
     private Map<String,String> cache = new HashMap<String,String>();
 
-    private final String SPLIT_LINUX = " 0 ";
+    private final String SPLIT_LINUX = " 186 ";
 
     /**
      * 执行扫描任务
@@ -122,6 +122,8 @@ public class ScanDirectory
         catch (IOException e)
         {
             System.out.println("something wrong in ftp operation ,exception:" + e);
+
+            return false;
         }
 
         return false;

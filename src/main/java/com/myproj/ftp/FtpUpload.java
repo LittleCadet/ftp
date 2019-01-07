@@ -92,10 +92,14 @@ public class FtpUpload
         catch (FileNotFoundException e)
         {
             System.out.println("uploadFileToFtp:failed,localUploadFilePath:"+localUploadFilePath+",\nexception:"+e);
+
+            return false;
         }
         catch (IOException e)
         {
             System.out.println("uploadFileToFtp:failed"+",\nexception:"+e);
+
+            return false;
         }
         finally
         {

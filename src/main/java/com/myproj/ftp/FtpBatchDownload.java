@@ -136,6 +136,8 @@ public class FtpBatchDownload
         catch (IOException e)
         {
             System.out.println("something wrong with io exception,exception:"+e + "localDownloadFilePath:"+localDownloadFilePath);
+
+            return false;
         }
         finally
         {
@@ -201,6 +203,8 @@ public class FtpBatchDownload
         catch (IOException e)
         {
             System.out.println("something wrong in ftp operation ,exception:"+e);
+
+            return false;
         }
 
         return false;
@@ -278,10 +282,14 @@ public class FtpBatchDownload
         catch (FileNotFoundException e)
         {
             System.out.println("processData failed in IO operation,e" + e);
+
+            return false;
         }
         catch (IOException e)
         {
             System.out.println("something wrong with IO operation,e" + e);
+
+            return false;
         }
         finally
         {

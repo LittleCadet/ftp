@@ -110,6 +110,8 @@ public class FtpDownload
         catch (IOException e)
         {
             System.out.println("something wrong with io exception,exception:"+e + "localDownloadFilePath:"+localDownloadFilePath);
+
+            return false;
         }
         finally
         {
@@ -156,6 +158,8 @@ public class FtpDownload
         catch (IOException e)
         {
             System.out.println("something wrong in ftp operation ,exception:"+e);
+
+            return false;
         }
 
         return false;

@@ -1,6 +1,5 @@
 package ftpTest;
 
-
 import com.myproj.ftp.*;
 import init.InitSpring;
 import org.junit.Assert;
@@ -11,6 +10,7 @@ import java.util.Date;
 
 /**
  * ftp功能测试类
+ *
  * @Author 沈燮
  * @Date 2018/12/27
  */
@@ -24,7 +24,7 @@ public class FtpTest
     @Test
     public void upload()
     {
-        FtpUpload ftpUpload =(FtpUpload)context.getBean("ftpUpload");
+        FtpUpload ftpUpload = (FtpUpload)context.getBean("ftpUpload");
         Assert.assertTrue(ftpUpload.upload());
     }
 
@@ -68,7 +68,6 @@ public class FtpTest
         Assert.assertTrue(ftpBatchDownload.batchDownload());
     }
 
-
     /**
      * 批量删除服务器上的文件
      */
@@ -96,7 +95,6 @@ public class FtpTest
             e.printStackTrace();
         }
     }
-
 
     /**
      * 测试定时扫描：让线程睡眠的目的：让spring容器在睡眠的时间中保持唤醒的状态
@@ -127,7 +125,6 @@ public class FtpTest
             e.printStackTrace();
         }
     }
-
 
     /**
      * 运行两个定时任务：定时下载+定时扫描

@@ -106,10 +106,14 @@ public class FtpBatchUpload
         catch (FileNotFoundException e)
         {
             System.out.println("uploadFileToFtp:failed,localUploadFilePath:"+localUploadFilePath+",\nexception:"+e);
+
+            return false;
         }
         catch (IOException e)
         {
             System.out.println("uploadFileToFtp:failed"+",\nexception:"+e);
+
+            return false;
         }
         finally
         {
@@ -217,10 +221,14 @@ public class FtpBatchUpload
         catch (FileNotFoundException e)
         {
             System.out.println("processData failed in IO operation,e" + e);
+
+            return false;
         }
         catch (IOException e)
         {
             System.out.println("something wrong with IO operation,e" + e);
+
+            return false;
         }
         finally
         {
@@ -233,6 +241,8 @@ public class FtpBatchUpload
                 catch (IOException e)
                 {
                     System.out.println("io close exception,e:" + e);
+
+                    return false;
                 }
             }
         }

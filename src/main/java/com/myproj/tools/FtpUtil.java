@@ -1,6 +1,7 @@
 package com.myproj.tools;
 
 import org.apache.commons.net.ftp.FTPClient;
+import org.apache.commons.net.ftp.FTPReply;
 
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -67,14 +68,16 @@ public class FtpUtil
             {
                 if(!client.isConnected())
                 {
-                    //根据ip+port连接ftp
+                    //根据ip连接ftp
                     client.connect(host);
 
-                    //登录ftp
-                    flag = client.login(account,password);
+                    if(client.isConnected())
+                    {
+                        //登录ftp
+                        flag = client.login(account,password);
+                    }
 
                     System.out.println("用户登录ftp" +(flag.toString().equals("true") ?"成功":"失败"));
-
                 }
 
                 if(!flag)

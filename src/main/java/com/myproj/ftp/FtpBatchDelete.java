@@ -116,6 +116,8 @@ public class FtpBatchDelete
         catch (IOException e)
         {
             System.out.println("something wrong with changing directory by ftp：exception:" + e);
+
+            return false;
         }
         finally
         {
@@ -183,6 +185,8 @@ public class FtpBatchDelete
         {
             System.out.println(
                 "failed to delete file by ftp ：remoteDeleteFilePath：" + remoteDeleteFilePath + ",exception:" + e);
+
+            isExist = 500;
         }
 
         return isExist;
@@ -218,10 +222,14 @@ public class FtpBatchDelete
         catch (FileNotFoundException e)
         {
             System.out.println("method:isNotNull is failed,e" + e);
+
+            return false;
         }
         catch (IOException e)
         {
             System.out.println("IO operation is failed,e" + e);
+
+            return false;
         }
         finally
         {
